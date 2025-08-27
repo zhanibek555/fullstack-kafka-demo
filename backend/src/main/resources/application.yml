@@ -1,0 +1,35 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: fullstack-kafka-demo
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ordersdb
+    username: orders
+    password: orders
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: demo-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+        spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
+        spring.json.value.default.type: com.example.fullstack.events.OrderCreatedEvent
+        spring.json.trusted.packages: "*"
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    listener:
+      ack-mode: record
+      missing-topics-fatal: false
+security:
+  jwt:
+    secret: "dev-demo-secret-change-me"
+    expiration-seconds: 86400
